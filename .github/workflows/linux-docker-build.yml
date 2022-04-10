@@ -1,4 +1,3 @@
-name: Build docker images
 on:
   push:
     branches:
@@ -10,10 +9,10 @@ on:
 
 env:
   DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/docker-build
-  
+
 jobs:
-  windows_builder:
-    name: Build the MinGW docker image
+  linux_builder:
+    name: Build the Linux docker image
     runs-on: 'ubuntu-20.04'
     steps:
       - uses: actions/checkout@v2
@@ -27,14 +26,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Build the docker image
         run: |
-          docker pull $DOCKER_IMAGE_NAME:latest-win && $(exit 0)
-          cd ./windows-build
-          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
-      
+          docker pull $DOCKER_IMAGE_NAME:latest-linux && $(exit 0)
+          cd ./linux-build
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-linux -t $DOCKER_IMAGE_NAME:tmp-linux .
+
       - name: Push
         run: |
-          docker tag $DOCKER_IMAGE_NAME:tmp-win $DOCKER_IMAGE_NAME:latest-win
-          docker push $DOCKER_IMAGE_NAME:latest-win
+          docker tag $DOCKER_IMAGE_NAME:tmp-linux $DOCKER_IMAGE_NAME:latest-linux
+          docker push $DOCKER_IMAGE_NAME:latest-linux

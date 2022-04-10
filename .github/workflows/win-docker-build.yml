@@ -20,19 +20,20 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
-      
-      - name: Build the docker image
-        run: |
-          cd ./windows-build
-          docker build -t $DOCKER_IMAGE_NAME:tmp-win .
-      
+
       - name: Log in to the GHCR.IO
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          
+      
+      - name: Build the docker image
+        run: |
+          docker pull $DOCKER_IMAGE_NAME:latest-win
+          cd ./windows-build
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
+      
       - name: Push
         run: |
           docker tag $DOCKER_IMAGE_NAME:tmp-win $DOCKER_IMAGE_NAME:latest-win

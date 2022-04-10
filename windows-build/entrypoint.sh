@@ -24,3 +24,4 @@ fi
 go build -o "${GITHUB_WORKSPACE}/build/opennox-server.exe" -ldflags="-X ${VP}.commit=${SHA} -X ${VP}.version=${VERS}" -tags server ./cmd/opennox
 cd "${GITHUB_WORKSPACE}/build"
 i686-w64-mingw32-ldd opennox.exe | sed 's/.*\=> \(.*\)/\1/' | grep -v -i "not found" | xargs -I{} cp {} .
+chmod -R a+r "${GITHUB_WORKSPACE}/gocache"

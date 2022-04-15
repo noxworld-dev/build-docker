@@ -1,26 +1,10 @@
 #!/bin/sh
 cd "${GITHUB_WORKSPACE}"
-export VP="github.com/noxworld-dev/opennox/v1/internal/version"
-export SHA=$(git rev-parse --short HEAD)
-export VERS=$(git name-rev --tags --name-only $SHA)
 
 mkdir -p "${GITHUB_WORKSPACE}/build"
 cd "${GITHUB_WORKSPACE}/src"
-export GOPATH="${GITHUB_WORKSPACE}/gocache/client/path"
-export GOCACHE="${GITHUB_WORKSPACE}/gocache/client/cache"
-mkdir -p "$GOPATH"
-go build -o "${GITHUB_WORKSPACE}/build/opennox" -ldflags="-X ${VP}.commit=${SHA} -X ${VP}.version=${VERS}" ./cmd/opennox
-export GOPATH="${GITHUB_WORKSPACE}/gocache/client-hd/path"
-export GOCACHE="${GITHUB_WORKSPACE}/gocache/client-hd/cache"
-if [ ! -d "${GITHUB_WORKSPACE}/gocache/client-hd" ]; then
-cp -r "${GITHUB_WORKSPACE}/gocache/client" "${GITHUB_WORKSPACE}/gocache/client-hd"
-fi
-go build -o "${GITHUB_WORKSPACE}/build/opennox-hd" -ldflags="-X ${VP}.commit=${SHA} -X ${VP}.version=${VERS}" -tags highres ./cmd/opennox
-export GOPATH="${GITHUB_WORKSPACE}/gocache/server/path"
-export GOCACHE="${GITHUB_WORKSPACE}/gocache/server/cache"
-if [ ! -d "${GITHUB_WORKSPACE}/gocache/server" ]; then
-cp -r "${GITHUB_WORKSPACE}/gocache/client" "${GITHUB_WORKSPACE}/gocache/server"
-fi
-go build -o "${GITHUB_WORKSPACE}/build/opennox-server" -ldflags="-X ${VP}.commit=${SHA} -X ${VP}.version=${VERS}" -tags server ./cmd/opennox
+export GOPATH="${GITHUB_WORKSPACE}/gocache/path"
+export GOCACHE="${GITHUB_WORKSPACE}/gocache/cache"
+go run ./internal/noxbuild -o "${GITHUB_WORKSPACE}/build"
 cd "${GITHUB_WORKSPACE}/build"
 chmod -R a+r "${GITHUB_WORKSPACE}/gocache"

@@ -1,5 +1,6 @@
 FROM archlinux/archlinux:base-devel
 
+ENV MAKEFLAGS -j8
 ENV CGO_ENABLED 1
 
 RUN pacman -Syu --noconfirm &&\
@@ -7,7 +8,6 @@ RUN pacman -Syu --noconfirm &&\
 	useradd -m builder &&\
 	git clone --depth 1 -b go-cgo-gcc-parallelism-1.18.1 https://github.com/Evengard/go &&\
 	cd go/src && ./make.bash && pacman -R --noconfirm go &&\
-        /go/bin/go build cgo/runtime &&\
 	echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder &&\
 	su builder -c "cd &&\
 		git clone https://aur.archlinux.org/yay-bin.git &&\
@@ -18,8 +18,8 @@ RUN pacman -Syu --noconfirm &&\
 ENV PATH=/go/bin:$PATH
 ENV PKG_CONFIG_PATH /usr/i686-w64-mingw32/lib/pkgconfig/
 ENV CGO_CFLAGS_ALLOW (-fshort-wchar)|(-fno-strict-aliasing)|(-fno-strict-overflow)
-ENV LD_LIBRARY_PATH /usr/i686-w64-mingw32/lib
-ENV C_INCLUDE_PATH /usr/i686-w64-mingw32/include
+#ENV LD_LIBRARY_PATH /usr/i686-w64-mingw32/lib
+#ENV C_INCLUDE_PATH /usr/i686-w64-mingw32/include
 ENV GOARCH 386
 
 COPY entrypoint.sh /entrypoint.sh

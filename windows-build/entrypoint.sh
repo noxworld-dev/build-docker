@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 cd "${GITHUB_WORKSPACE}"
 git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 mkdir -p "${GITHUB_WORKSPACE}/build"

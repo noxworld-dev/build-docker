@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - master
+      - main
+      - dev
+    tags:
+      - '*'
+
+env:
+  DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/docker-build
+
+jobs:
+  linux_builder:
+    name: Linux packaging: AppImage
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Log in to the GHCR.IO
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the docker image
+        run: |
+          docker pull $DOCKER_IMAGE_NAME:latest-linux-packaging-appimage && $(exit 0)
+          cd ./linux-packaging-appimage
+          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-linux-packaging-appimage -t $DOCKER_IMAGE_NAME:tmp-linux-packaging-appimage .
+
+      - name: Push
+        run: |
+          docker tag $DOCKER_IMAGE_NAME:tmp-linux-packaging-appimage $DOCKER_IMAGE_NAME:latest-linux-packaging-appimage
+          docker push $DOCKER_IMAGE_NAME:latest-linux-packaging-appimage

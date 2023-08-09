@@ -1,6 +1,6 @@
 #!/bin/sh
 # OpenNox AppImage bulder by Xandros Darkstorm (Discord for support: xandrosdarkstorm)
-# Version 1.1
+# Version 1.2
 
 # Unfortunately AppImageKit project has no strict policy regarding releases.
 # Use "continuous" build to get the latest development build. You can still specify any other build (13 is the latest).
@@ -75,10 +75,13 @@ bundle_struct_exit_on_error
 echo "Copying project files..."
 cp $PROJECT_FOLDER/opennox opennox_bundle.AppDir/usr/bin/opennox
 bundle_filecopy_exit_on_error
+chmod +x opennox_bundle.AppDir/usr/bin/opennox
 cp $PROJECT_FOLDER/opennox-hd opennox_bundle.AppDir/usr/bin/opennox-hd
 bundle_filecopy_exit_on_error
+chmod +x opennox_bundle.AppDir/usr/bin/opennox-hd
 cp $PROJECT_FOLDER/opennox-server opennox_bundle.AppDir/usr/bin/opennox-server
 bundle_filecopy_exit_on_error
+chmod +x opennox_bundle.AppDir/usr/bin/opennox-server
 
 echo "Copying libraries:"
 while read lib_to_copy
@@ -213,10 +216,10 @@ make_dummyicon_on_fail
 echo "Building the AppImage..."
 if [ -z $SIGNKEY ]; then
 echo "AppImage will not be signed."
-./appimagetool-$APPIMAGETOOL_RELEASE.AppImage -n --comp gzip opennox_bundle.AppDir
+./appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip opennox_bundle.AppDir
 else
 echo "AppImage will be signed with GPG key '$SIGNKEY'."
-./appimagetool-$APPIMAGETOOL_RELEASE.AppImage -n --comp gzip -s --sign-key $SIGNKEY opennox_bundle.AppDir
+./appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip -s --sign-key $SIGNKEY opennox_bundle.AppDir
 fi
 exit_on_build_fail
 

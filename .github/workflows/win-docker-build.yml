@@ -1,4 +1,4 @@
-name: Build docker image for Windows builds
+name: Docker for Windows builds
 on:
   push:
     branches:

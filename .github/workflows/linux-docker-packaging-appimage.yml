@@ -1,4 +1,4 @@
-name: Build docker image for Appimage packaging
+name: Docker for Appimage packaging
 on:
   push:
     branches:

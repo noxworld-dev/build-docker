@@ -1,4 +1,4 @@
-name: Build docker image for Linux builds
+name: Docker for Linux builds
 on:
   push:
     branches:

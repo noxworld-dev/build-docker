@@ -3,13 +3,15 @@ FROM archlinux/archlinux:base-devel
 ENV MAKEFLAGS -j8
 ENV CGO_ENABLED 1
 
-RUN pacman -Syu --noconfirm &&\
-	pacman -S --noconfirm git go multilib-devel &&\
-	useradd -m builder &&\
-	git clone --depth 1 -b go-cgo-gcc-parallelism-1.20.3 https://github.com/Evengard/go &&\
-	cd go/src && ./make.bash && pacman -R --noconfirm go &&\
-	echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder &&\
-	su builder -c "cd &&\
+RUN echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+RUN pacman -Syu --noconfirm
+RUN pacman -S --noconfirm git go multilib-devel
+RUN	useradd -m builder
+RUN	git clone --depth 1 -b go-cgo-gcc-parallelism-1.20.3 https://github.com/Evengard/go &&\
+	cd go/src && ./make.bash
+RUN pacman -R --noconfirm go
+RUN	echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder	
+RUN sudo -u builder sh -c "cd &&\
 		git clone https://aur.archlinux.org/yay-bin.git &&\
 		cd yay-bin &&\
 		makepkg -si --noconfirm &&\

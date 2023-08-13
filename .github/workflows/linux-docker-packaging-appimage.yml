@@ -9,7 +9,7 @@ on:
       - '*'
 
 env:
-  DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/build-docker
+  DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/docker-build
 
 jobs:
   linux_builder:

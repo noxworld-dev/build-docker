@@ -1,12 +1,14 @@
 #!/bin/sh
 # OpenNox AppImage bulder by Xandros Darkstorm (Discord for support: xandrosdarkstorm)
-# Version 1.2
+# Version 1.3
 
 # Unfortunately AppImageKit project has no strict policy regarding releases.
-# Use "continuous" build to get the latest development build. You can still specify any other build (13 is the latest).
-APPIMAGETOOL_RELEASE="13"
 PROJECT_FOLDER="${GITHUB_WORKSPACE}/build"
 LIBS_LIST="libs_to_copy"
+if [ -z $APPIMAGETOOL_RELEASE ]; then
+	# Use "continuous" build to get the latest development build. You can still specify any other build (13 is the latest).
+	APPIMAGETOOL_RELEASE="13"
+fi
 
 if [ -z $OPENNOX_CFG ]; then
 	OPENNOX_CFG="opennox/opennox.yml"

@@ -1,6 +1,6 @@
 #!/bin/sh
 # OpenNox AppImage bulder by Xandros Darkstorm (Discord for support: xandrosdarkstorm)
-# Version 1.3
+# Version 1.4
 
 # Unfortunately AppImageKit project has no strict policy regarding releases.
 PROJECT_FOLDER="${GITHUB_WORKSPACE}/build"
@@ -8,6 +8,11 @@ LIBS_LIST="libs_to_copy"
 if [ -z $APPIMAGETOOL_RELEASE ]; then
 	# Use "continuous" build to get the latest development build. You can still specify any other build (13 is the latest).
 	APPIMAGETOOL_RELEASE="13"
+fi
+
+if [ -z $APPIMAGETOOL_FOLDER ]; then
+	# The path to the appimagetool. Added to allow pre-downloading during building Docker container.
+	APPIMAGETOOL_FOLDER="."
 fi
 
 if [ -z $OPENNOX_CFG ]; then
@@ -58,15 +63,15 @@ fi
 }
 
 echo "Checking appimagetool..."
-if [ ! -x "./appimagetool-$APPIMAGETOOL_RELEASE.AppImage" ] || [ "$APPIMAGETOOL_RELEASE" = "continuous" ]; then
+if [ ! -x "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage" ] || [ "$APPIMAGETOOL_RELEASE" = "continuous" ]; then
 echo "Downloading appimagetool..."
-wget -q --show-progress  -O appimagetool-$APPIMAGETOOL_RELEASE.AppImage "https://github.com/AppImage/AppImageKit/releases/download/$APPIMAGETOOL_RELEASE/appimagetool-i686.AppImage"
+wget -q --show-progress  -O "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage" "https://github.com/AppImage/AppImageKit/releases/download/$APPIMAGETOOL_RELEASE/appimagetool-i686.AppImage"
 	if [ $? -gt 0 ]; then
-	rm appimagetool-$APPIMAGETOOL_RELEASE.AppImage
+	rm "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage"
 	echo "Failed to download appimagetool. Aborting. Please check if you have an access to GitHub."
 	exit 1
 	fi
-chmod +x appimagetool-$APPIMAGETOOL_RELEASE.AppImage
+chmod +x "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage"
 fi
 
 echo "Preparing bundle structure..."
@@ -218,10 +223,10 @@ make_dummyicon_on_fail
 echo "Building the AppImage..."
 if [ -z $SIGNKEY ]; then
 echo "AppImage will not be signed."
-./appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip opennox_bundle.AppDir
+$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip opennox_bundle.AppDir
 else
 echo "AppImage will be signed with GPG key '$SIGNKEY'."
-./appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip -s --sign-key $SIGNKEY opennox_bundle.AppDir
+$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage --appimage-extract-and-run -n --comp gzip -s --sign-key $SIGNKEY opennox_bundle.AppDir
 fi
 exit_on_build_fail
 

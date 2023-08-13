@@ -8,7 +8,7 @@ COPY scripts/ /scripts/
 # Prerequisites for the appimagetool. Marking scripts as executable
 RUN apt update && apt upgrade -y && apt install -y zlib1g file wget &&\
 	apt install -y libsdl2-dev libopenal-dev && chmod -v a+x /scripts/*.sh &&\
-	wget --show-progress  -O "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage" "https://github.com/AppImage/AppImageKit/releases/download/$APPIMAGETOOL_RELEASE/appimagetool-i686.AppImage" &&\
+	wget -q --show-progress  -O "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage" "https://github.com/AppImage/AppImageKit/releases/download/$APPIMAGETOOL_RELEASE/appimagetool-i686.AppImage" &&\
 	chmod -v +x "$APPIMAGETOOL_FOLDER/appimagetool-$APPIMAGETOOL_RELEASE.AppImage"
 
 COPY entrypoint.sh /entrypoint.sh

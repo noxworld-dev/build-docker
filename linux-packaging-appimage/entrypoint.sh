@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-chmod -v a+x /scripts/*.sh
 echo "Generating libraries list..."
 /scripts/gen_libs_list.sh
 echo "Generating AppImage..."

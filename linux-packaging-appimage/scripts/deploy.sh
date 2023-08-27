@@ -19,7 +19,7 @@ if [ -z $OPENNOX_CFG ]; then
 	OPENNOX_CFG="opennox/opennox.yml"
 fi
 if [ -z $OPENNOX_DATA ]; then
-	OPENNOX_DATA="opennox/gamedata"
+	OPENNOX_DATA="opennox"
 fi
 if [ -z $OPENNOX_STATEFILES ]; then
 	OPENNOX_STATEFILES="opennox"

@@ -18,16 +18,18 @@ cat > $TMPFOLDER/libs_to_include <<EOF
 EOF
 
 # [LIBS_TO_IGNORE] List of libraries which must be excluded from the list.
-# libc, libm and libpthread are part of libc6 package, which must never be distributed.
+# libc, libm, libdl and libpthread are part of libc6 package, which must never be distributed.
 # libGL must never be distributed, because it is an important system dependant graphical library.
 # libGLdispatch, libGLX are provided by libgl1 package and also vendor-dependant
 cat > $TMPFOLDER/ignoredlibs <<EOF
 libc.so
+libdl.so
 libm.so
 libpthread.so
 libGL.so
 libGLX.so
 libGLdispatch.so
+libdrm.so
 EOF
 
 is_lib_missing=0
@@ -37,6 +39,7 @@ is_library_ignored()
 	while read ignoredlib
 	do
 		if [ ! "${1##"$ignoredlib"*}" ]; then
+			echo "$1 is ignored!"
 			ignored=1
 			break
 		fi
@@ -68,6 +71,7 @@ get_lib_dependecies()
 		is_library_already_checked $libpath
 		if [ $? -eq 0 ]; then
 			if [ -f $libpath ]; then
+				echo "Found $libname ($libpath)"
 				is_library_ignored $libname
 				if [ $? -eq 0 ]; then
 					echo "$libpath" >> $LIBS_LIST_OUTPUT

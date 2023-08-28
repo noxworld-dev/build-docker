@@ -1,12 +1,17 @@
 name: Docker for Appimage packaging
 on:
   push:
+    paths:
+      - 'linux-packaging-appimage/**'
     branches:
       - master
       - main
       - dev
     tags:
       - '*'
+  pull_request:
+    paths:
+      - 'linux-packaging-appimage/**'
 
 env:
   DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/docker-build

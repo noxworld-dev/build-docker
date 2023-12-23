@@ -6,7 +6,7 @@ ENV CGO_ENABLED 1
 RUN echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf &&\
 	pacman -Syu --noconfirm && pacman -S --noconfirm git go multilib-devel &&\
 	useradd -m builder &&\
-	git clone --depth 1 -b go-cgo-gcc-parallelism-1.20.3 https://github.com/Evengard/go &&\
+	git clone --depth 1 -b go1.21.5 https://github.com/golang/go &&\
 	cd go/src && ./make.bash && pacman -R --noconfirm go &&\
 	echo "builder ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/builder	&&\
 	sudo -u builder sh -c "cd &&\

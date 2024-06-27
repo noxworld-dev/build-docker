@@ -20,7 +20,7 @@ env:
 
 jobs:
   windows_builder_latest:
-    name: Build the ${{ env.LATEST_IMAGE_TAG }} MinGW docker image
+    name: Build the MinGW docker image with latest toolkit
     runs-on: 'ubuntu-20.04'
     steps:
       - uses: actions/checkout@v2
@@ -47,7 +47,7 @@ jobs:
           docker push $DOCKER_IMAGE_NAME:$LATEST_IMAGE_TAG
 
   windows_builder_downgrade:
-    name: Build the ${{ env.DOWNGRADE_IMAGE_TAG }} MinGW docker image
+    name: Build the MinGW docker image with downgraded toolkit
     runs-on: 'ubuntu-20.04'
     steps:
       - uses: actions/checkout@v2

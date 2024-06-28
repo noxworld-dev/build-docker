@@ -15,11 +15,13 @@ on:
 
 env:
   DOCKER_IMAGE_NAME: ghcr.io/noxworld-dev/docker-build
-  
+  LATEST_IMAGE_TAG: latest-win
+  DOWNGRADE_IMAGE_TAG: win-go1.21.4
+
 jobs:
-  windows_builder:
-    name: Build the MinGW docker image
-    runs-on: 'ubuntu-20.04'
+  windows_builder_latest:
+    name: Build the MinGW docker image with latest toolkit
+    runs-on: 'ubuntu-22.04'
     steps:
       - uses: actions/checkout@v2
         with:
@@ -33,13 +35,41 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Build the docker image
+      - name: Build the ${{ env.LATEST_IMAGE_TAG }} image
         run: |
-          docker pull $DOCKER_IMAGE_NAME:latest-win && $(exit 0)
+          docker pull $DOCKER_IMAGE_NAME:$LATEST_IMAGE_TAG && $(exit 0)
           cd ./windows-build
-          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
+          docker build --ulimit nofile=1024:524288 --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
       
-      - name: Push
+      - name: Push the ${{ env.LATEST_IMAGE_TAG }} image
         run: |
-          docker tag $DOCKER_IMAGE_NAME:tmp-win $DOCKER_IMAGE_NAME:latest-win
-          docker push $DOCKER_IMAGE_NAME:latest-win
+          docker tag $DOCKER_IMAGE_NAME:tmp-win $DOCKER_IMAGE_NAME:$LATEST_IMAGE_TAG
+          docker push $DOCKER_IMAGE_NAME:$LATEST_IMAGE_TAG
+
+  windows_builder_downgrade:
+    name: Build the MinGW docker image with downgraded toolkit
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Log in to the GHCR.IO
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build the ${{ env.DOWNGRADE_IMAGE_TAG }} image
+        run: |
+          docker pull $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG && $(exit 0)
+          cd ./windows-build
+          docker build --ulimit nofile=1024:524288 --build-arg GO_VERSION=go1.21.4 --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG -t $DOCKER_IMAGE_NAME:tmp-win .
+
+      - name: Push the ${{ env.DOWNGRADE_IMAGE_TAG }} image
+        run: |
+          docker tag $DOCKER_IMAGE_NAME:tmp-win $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG
+          docker push $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG
+

@@ -39,7 +39,7 @@ jobs:
         run: |
           docker pull $DOCKER_IMAGE_NAME:$LATEST_IMAGE_TAG && $(exit 0)
           cd ./windows-build
-          docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
+          docker build --ulimit nofile=1024:524288 --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:latest-win -t $DOCKER_IMAGE_NAME:tmp-win .
       
       - name: Push the ${{ env.LATEST_IMAGE_TAG }} image
         run: |
@@ -66,7 +66,7 @@ jobs:
         run: |
           docker pull $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG && $(exit 0)
           cd ./windows-build
-          docker build --build-arg GO_VERSION=go1.21.4 --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG -t $DOCKER_IMAGE_NAME:tmp-win .
+          docker build --ulimit nofile=1024:524288 --build-arg GO_VERSION=go1.21.4 --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $DOCKER_IMAGE_NAME:$DOWNGRADE_IMAGE_TAG -t $DOCKER_IMAGE_NAME:tmp-win .
 
       - name: Push the ${{ env.DOWNGRADE_IMAGE_TAG }} image
         run: |

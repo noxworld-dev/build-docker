@@ -1,6 +1,6 @@
 FROM archlinux/archlinux:multilib-devel
 
-ARG GO_VERSION="go1.21.5"
+ARG GO_VERSION="go1.22.8"
 ENV MAKEFLAGS -j8
 ENV CGO_ENABLED 1
 
